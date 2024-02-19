@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈</title>
+</head>
+<body>
+    <h1>퀴즈</h1>
+    <h2>{{ question.question }}</h2>
+    <form id="quiz_form" method="POST" action="/submit_answer"> 
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        {% for option_index in range(options|length) %}
+            {% set option = options[option_index] %}
+            <input type="radio" id="option{{ option_index }}" name="answer" value="{{ option_index }}" {% if submitted %} disabled {% endif %}>
+            <label for="option{{ option_index }}">{{ option }}</label><br>
+        {% endfor %}
+        <input type="submit" value="답변 제출" {% if submitted %} disabled {% endif %}>
+    </form>
+
+    {% if submitted %}
+        <p>선택한 답변: {{ options[selected_answer] }}</p>
+        <p>답변 결과:</p>
+        {% if message_type == 'success' %}
+            <p>정답입니다!</p>
+        {% elif message_type == 'error' %}
+            <p>틀렸습니다. 정답은 {{ correct_answer }}입니다.</p>
+        {% endif %}
+        <form method="GET" action="/next_question">
+            <button type="submit">다음 문제 풀기</button>
+        </form>
+    {% endif %}
+</body>
+</html>
